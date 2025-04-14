@@ -7,9 +7,10 @@ import {
   Button,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  TouchableOpacity
 } from 'react-native';
-import { labels } from './components/labels';
+import { labels } from '../components/labels';
 
 export default function App() {
   const [nome, setNome] = useState('');
@@ -22,6 +23,11 @@ export default function App() {
       setNome('');
       setTelefone('');
     }
+  };
+
+  const removerUsuario = (index) => {
+    const novaLista = usuarios.filter((_, i) => i !== index);
+    setUsuarios(novaLista);
   };
 
   return (
@@ -46,7 +52,7 @@ export default function App() {
         placeholder="Digite o telefone"
         placeholderTextColor="#aaa"
         value={telefone}
-        onChangeText={setTelefone}
+        onChangeText={(text) => setTelefone(text.replace(/[^0-9]/g, ''))}
         keyboardType="phone-pad"
       />
 
@@ -57,7 +63,15 @@ export default function App() {
       <ScrollView style={styles.lista}>
         {usuarios.map((usuario, index) => (
           <View key={index} style={styles.usuario}>
-            <Text style={styles.usuarioTexto}>{usuario.nome} - {usuario.telefone}</Text>
+            <Text style={styles.usuarioTexto}>
+              {usuario.nome} - {usuario.telefone}
+            </Text>
+            <TouchableOpacity
+              style={styles.botaoRemover}
+              onPress={() => removerUsuario(index)}
+            >
+              <Text style={styles.removerTexto}>Remover</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
@@ -108,5 +122,18 @@ const styles = StyleSheet.create({
   },
   usuarioTexto: {
     color: '#fff',
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  botaoRemover: {
+    backgroundColor: '#ff4444',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+  },
+  removerTexto: {
+    color: '#fff',
+    fontSize: 14,
   },
 });
